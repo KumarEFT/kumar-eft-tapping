@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#eaf0e7"><meta name="description" content="Gentle guided EFT tapping and self-care practices.">
+<link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon.svg">
+<title>Kumar EFT Tapping</title>
+<style>
+:root{--sage:#78917c;--deep:#304b3d;--cream:#f5f5ee;--pale:#e5ece2;--white:#fff}
+*{box-sizing:border-box}body{margin:0;background:var(--cream);color:var(--deep);font:16px system-ui,-apple-system,sans-serif}
+header{padding:28px 20px 18px;background:linear-gradient(135deg,#e5ece2,#f7f6ed);border-radius:0 0 26px 26px}
+h1{font-size:27px;margin:0 0 5px}h2{font-size:21px;margin:8px 0}p{line-height:1.5}
+main{max-width:680px;margin:auto;padding:18px}
+.tag{color:var(--sage);font-weight:650}.card{background:white;border-radius:18px;padding:18px;margin:13px 0;box-shadow:0 3px 14px #304b3d0b}
+.session{width:100%;text-align:left;border:0;background:white;color:var(--deep);padding:18px;border-radius:17px;margin:7px 0;font-size:16px;box-shadow:0 2px 10px #304b3d0b}
+.session b{display:block;font-size:18px;margin-bottom:4px}.session span{color:#647468;font-size:14px}
+button.primary{border:0;background:var(--sage);color:white;border-radius:14px;padding:14px 18px;font-size:16px;font-weight:650;width:100%;margin:8px 0}
+button.secondary{border:1px solid var(--sage);background:transparent;color:var(--deep);border-radius:14px;padding:12px 16px;font-size:15px;width:100%;margin:5px 0}
+.hidden{display:none}.big{font-size:23px;font-weight:700}.prompt{background:var(--pale);padding:24px;border-radius:18px;font-size:23px;line-height:1.4;margin:15px 0}
+input[type=range]{width:100%;accent-color:var(--sage)}.top{display:flex;gap:10px;align-items:center}.back{width:auto}
+small{color:#68756b}.leaf{font-size:28px}
+</style>
+</head>
+<body>
+<header><div class="tag">✿ A GENTLE MOMENT FOR YOURSELF</div><h1>Kumar EFT Tapping</h1><div>Release · Reset · Renew</div></header>
+<main>
+<section id="home">
+<div class="card"><div class="leaf">🌿</div><h2>Welcome</h2><p>Choose a guided practice. Go at your own pace and pause whenever you need. You do not have to feel calm immediately; noticing what you feel is a meaningful first step.</p></div>
+<div class="tag">CHOOSE A PRACTICE</div>
+<div id="sessions"></div>
+<div class="card"><h2>EFT tapping points</h2><p>Tap gently with your fingertips: side of hand, eyebrow, side of eye, under eye, under nose, chin, collarbone, under arm and top of head.</p></div>
+<div class="card"><small>Wellness notice: This app offers general self-help exercises, not diagnosis or treatment. EFT is not a substitute for professional mental-health care. If a practice feels overwhelming, stop, ground yourself, and seek support from a qualified professional.</small></div>
+</section>
+<section id="practice" class="hidden">
+<div class="top"><button class="secondary back" id="back">← Back</button><h2 id="title"></h2></div>
+<div id="before">
+<p>On a scale from 0 (calm) to 10 (very intense), how strong does this feeling seem right now?</p><div class="big"><span id="beforeVal">5</span> / 10</div><input id="beforeRange" type="range" min="0" max="10" value="5">
+<div class="card"><b>Setup statement</b><p id="setup"></p></div>
+<button class="primary" id="begin">Begin tapping</button>
+</div>
+<div id="round" class="hidden">
+<div class="tag" id="count"></div><h2 id="point"></h2><p>Tap gently here and repeat:</p><div class="prompt" id="phrase"></div>
+<button class="primary" id="speak">🔊 Speak this phrase</button><button class="secondary" id="next">Next tapping point</button>
+</div>
+<div id="after" class="hidden">
+<h2>Pause and notice</h2><p>Take a comfortable breath. What do you notice now?</p>
+<div class="big"><span id="afterVal">3</span> / 10</div><input id="afterRange" type="range" min="0" max="10" value="3">
+<p>There is no right score and no pressure to feel different.</p>
+<button class="primary" id="finish">Complete session</button><button class="secondary" id="repeat">Repeat tapping round</button>
+</div>
+</section>
+</main>
+<script>
+const data=[
+["Calm anxiety","A gentle reset when worry feels loud","Even though I feel anxious right now, I accept how I feel and give myself permission to take one gentle step toward calm.",["This anxious feeling","I notice the worry in my body","I do not have to solve everything now","I can breathe through this moment","I am safe enough in this moment","I choose a little more calm"]],
+["Overthinking","Slow the cycle of repeated thoughts","Even though my mind keeps going over things, I accept myself and allow space for a calmer perspective.",["All these repeating thoughts","My mind is trying to protect me","I can pause for a moment","One thought is not the whole truth","I release the need to solve it all now","I return to this moment"]],
+["Fear and confidence","Meet fear with kindness and courage","Even though I feel afraid, I honour this feeling and choose to support myself with compassion.",["This fear I am carrying","It makes sense that I feel this way","I can be gentle with myself","I do not need to be fearless","I can take one small brave step","I am learning to trust myself"]],
+["Sleep and relaxation","Wind down with soothing words","Even though my body or mind feels unsettled, I give myself permission to rest without forcing sleep.",["Letting the day become quieter","I soften my shoulders","I do not need to chase sleep","I allow my breathing to slow","This moment can be restful","I welcome peaceful rest"]],
+["Self-worth","Practice a kinder inner voice","Even though I am being hard on myself, I choose to meet myself with patience and kindness.",["This feeling of not being enough","I am allowed to be a work in progress","I can speak to myself kindly","My worth is not measured by perfection","I deserve care and respect","I choose to treat myself gently"]]
+];
+const points=["Eyebrow","Side of eye","Under eye","Under nose","Chin","Collarbone"];
+let current=0,step=0;
+const $=id=>document.getElementById(id);
+function show(id){$("home").classList.toggle("hidden",id!=="home");$("practice").classList.toggle("hidden",id!=="practice")}
+function speech(t){if(!("speechSynthesis"in window)){alert("Speech is not available in this browser.");return}speechSynthesis.cancel();let u=new SpeechSynthesisUtterance(t);u.lang="en-US";let vs=speechSynthesis.getVoices();let female=vs.find(v=>/female|woman/i.test(v.name)&&v.lang.startsWith("en"))||vs.find(v=>v.lang.startsWith("en"));if(female)u.voice=female;speechSynthesis.speak(u)}
+data.forEach((s,i)=>{let b=document.createElement("button");b.className="session";b.innerHTML=`<b>${s[0]}</b><span>${s[1]}</span>`;b.onclick=()=>start(i);$("sessions").appendChild(b)});
+function start(i){current=i;step=0;$("title").textContent=data[i][0];$("setup").textContent=data[i][2];$("before").classList.remove("hidden");$("round").classList.add("hidden");$("after").classList.add("hidden");show("practice")}
+$("back").onclick=()=>{speechSynthesis?.cancel();show("home")};
+$("beforeRange").oninput=e=>$("beforeVal").textContent=e.target.value;
+$("afterRange").oninput=e=>$("afterVal").textContent=e.target.value;
+$("begin").onclick=()=>{speech("Take a gentle breath. Repeat this setup statement three times while tapping the side of your hand. "+data[current][2]);$("before").classList.add("hidden");renderRound()};
+function renderRound(){let s=data[current];$("round").classList.remove("hidden");$("after").classList.add("hidden");$("count").textContent=`TAPPING POINT ${step+1} OF ${s[3].length}`;$("point").textContent=points[step];$("phrase").textContent=s[3][step];$("next").textContent=step===s[3].length-1?"Finish round":"Next tapping point"}
+$("speak").onclick=()=>speech($("phrase").textContent);
+$("next").onclick=()=>{speechSynthesis?.cancel();step++;if(step>=data[current][3].length){$("round").classList.add("hidden");$("after").classList.remove("hidden")}else renderRound()};
+$("finish").onclick=()=>{speech("You have completed this practice. Thank yourself for taking this moment.");show("home")};
+$("repeat").onclick=()=>{step=0;renderRound()};
+if("serviceWorker"in navigator && location.protocol.startsWith("http"))navigator.serviceWorker.register("./sw.js");
+</script>
+</body></html>
